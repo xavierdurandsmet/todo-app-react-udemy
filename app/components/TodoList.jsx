@@ -4,6 +4,7 @@ import Todo from 'Todo';
 const TodoList = React.createClass({
     render () {
         const { todos } = this.props;
+        
         const renderTodos = () => {
             return todos.map((todo) => {
                 return <Todo key={todo.id} {...todo}/>
