@@ -1,37 +1,21 @@
 import React from 'react';
+import uuid from 'node-uuid';
+
 import TodoList from 'TodoList';
 import TodoAddForm from 'TodoAddForm';
 import TodoSearch from 'TodoSearch';
-import uuid from 'node-uuid';
+import TodoAPI from 'TodoAPI';
 
 const TodoApp = React.createClass({
     getInitialState() {
         return {
             showCompleted: false,
             searchText: '',
-            todos: [
-                {
-                    id: uuid(),
-                    text: 'walk the dog',
-                    completed: true
-                },
-                {
-                    id: uuid(),
-                    text: 'clean the yard',
-                    completed: false
-                },
-                {
-                    id: uuid(),
-                    text: 'clean the house',
-                    completed: false
-                },
-                {
-                    id: uuid(),
-                    text: 'clean the kitchen',
-                    completed: false
-                }
-            ]
+            todos: TodoAPI.getTodos()
         }
+    },
+    componentDidUpdate() {
+        TodoAPI.setTodos(this.state.todos);
     },
     handleAddTodo(text) {
         const newList = [...this.state.todos, { text: text, id: uuid(), completed: false }]
@@ -58,16 +42,12 @@ const TodoApp = React.createClass({
         })
     },
     render() {
-        const { todos, searchText } = this.state;
-        const filteredTodos = () => {
-            return todos.filter((todo) => {
-                return todo.text.indexOf(searchText) >= 0;
-            })
-        }
+        const { todos, searchText, showCompleted } = this.state;
+        const filteredTodos = TodoAPI.filterTodos(todos, showCompleted, searchText);
         return (
             <div>
                 <TodoSearch onTodoSearch={this.handleTodoSearch} />
-                <TodoList todos={filteredTodos()} onToggle={this.handleToggle} />
+                <TodoList todos={filteredTodos} onToggle={this.handleToggle} />
                 <TodoAddForm onAddTodo={this.handleAddTodo} />
             </div>
         )
