@@ -2,6 +2,7 @@ import React from 'react';
 import TodoList from 'TodoList';
 import TodoAddForm from 'TodoAddForm';
 import TodoSearch from 'TodoSearch';
+import uuid from 'node-uuid';
 
 const TodoApp = React.createClass({
     getInitialState() {
@@ -10,27 +11,26 @@ const TodoApp = React.createClass({
             searchText: '',
             todos: [
                 {
-                    id: 0,
+                    id: uuid(),
                     text: 'walk the dog'
                 },
                 {
-                    id: 1,
+                    id: uuid(),
                     text: 'clean the yard'
                 },
                 {
-                    id: 2,
+                    id: uuid(),
                     text: 'clean the house'
                 },
                 {
-                    id: 3,
+                    id: uuid(),
                     text: 'clean the kitchen'
                 }
             ]
         }
     },
     handleAddTodo (text) {
-        const newId = this.state.todos[this.state.todos.length - 1].id + 1
-        const newList = this.state.todos.concat({text: text, id: newId})
+        const newList = [...this.state.todos, {text: text, id: uuid()}]
         this.setState({
             todos: newList
         })
@@ -42,11 +42,16 @@ const TodoApp = React.createClass({
         })
     },
     render() {
-        const { todos } = this.state;
+        const { todos, searchText } = this.state;
+        const filteredTodos = () => {
+            return todos.filter((todo) => {
+                return todo.text.indexOf(searchText) >= 0; 
+            })
+        }
         return (
             <div>
                 <TodoSearch onTodoSearch={this.handleTodoSearch}/>
-                <TodoList todos={this.state.todos}/>
+                <TodoList todos={filteredTodos()}/>
                 <TodoAddForm onAddTodo={this.handleAddTodo} />
             </div>
         )
