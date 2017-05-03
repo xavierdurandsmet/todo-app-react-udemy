@@ -12,46 +12,62 @@ const TodoApp = React.createClass({
             todos: [
                 {
                     id: uuid(),
-                    text: 'walk the dog'
+                    text: 'walk the dog',
+                    completed: true
                 },
                 {
                     id: uuid(),
-                    text: 'clean the yard'
+                    text: 'clean the yard',
+                    completed: false
                 },
                 {
                     id: uuid(),
-                    text: 'clean the house'
+                    text: 'clean the house',
+                    completed: false
                 },
                 {
                     id: uuid(),
-                    text: 'clean the kitchen'
+                    text: 'clean the kitchen',
+                    completed: false
                 }
             ]
         }
     },
-    handleAddTodo (text) {
-        const newList = [...this.state.todos, {text: text, id: uuid()}]
+    handleAddTodo(text) {
+        const newList = [...this.state.todos, { text: text, id: uuid(), completed: false }]
         this.setState({
             todos: newList
         })
     },
-    handleTodoSearch (showCompleted, searchText) {
+    handleTodoSearch(showCompleted, searchText) {
         this.setState({
             showCompleted: showCompleted,
             searchText: searchText.toLowerCase()
+        })
+    },
+    handleToggle(id) {
+        console.log(id);
+        const updatedTodos = this.state.todos.map((todo) => {
+            if (todo.id === id) {
+                todo.completed = !todo.completed
+            }
+            return todo;
+        })
+        this.setState({
+            todos: updatedTodos
         })
     },
     render() {
         const { todos, searchText } = this.state;
         const filteredTodos = () => {
             return todos.filter((todo) => {
-                return todo.text.indexOf(searchText) >= 0; 
+                return todo.text.indexOf(searchText) >= 0;
             })
         }
         return (
             <div>
-                <TodoSearch onTodoSearch={this.handleTodoSearch}/>
-                <TodoList todos={filteredTodos()}/>
+                <TodoSearch onTodoSearch={this.handleTodoSearch} />
+                <TodoList todos={filteredTodos()} onToggle={this.handleToggle} />
                 <TodoAddForm onAddTodo={this.handleAddTodo} />
             </div>
         )
